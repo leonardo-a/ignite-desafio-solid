@@ -6,7 +6,20 @@ class ListAllUsersController {
   constructor(private listAllUsersUseCase: ListAllUsersUseCase) {}
 
   handle(request: Request, response: Response): Response {
-    // Complete aqui
+    const { user_id } = request.headers;
+
+    if (Array.isArray(user_id)) {
+      return response
+        .status(400)
+        .send({ error: "invalid format for header variable" });
+    }
+
+    try {
+      const usersList = this.listAllUsersUseCase.execute({ user_id });
+      return response.send(usersList);
+    } catch (err) {
+      return response.status(400).send({ error: "couldnt send users list!" });
+    }
   }
 }
 
